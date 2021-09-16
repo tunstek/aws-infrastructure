@@ -1,0 +1,20 @@
+---
+- name: register dynamic_hosts_list
+  shell: docker node ls | grep -v 'HOSTNAME' | grep -v '*' | grep -v 'Down' | awk '{print $1}' | xargs -n 1 docker inspect -f "{{ '{{' }} .Status.Addr {{ '}}' }}"
+  register: dynamic_hosts_list
+  failed_when:
+    - dynamic_hosts_list.rc != 0
+    - "'requires at least 1 argument' not in dynamic_hosts_list.stderr"
+
+- name: Create the dynamic_hosts group
+  add_host:
+    hostname: '{{ item }}'
+    group: dynamic_hosts
+    inventory_dir: '{{ inventory_dir }}'
+  with_items:
+    - '{{ dynamic_hosts_list.stdout_lines }}'
+
+- debug:
+    msg:
+      - 'Registering dynamic_hosts_list - {{ dynamic_hosts_list.stdout_lines }}'
+      - 'dynamic_hosts group - {{ groups["dynamic_hosts"] }}'

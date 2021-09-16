@@ -1,0 +1,5 @@
+---
+# ensure old files and py caches are not lying around from previous runs
+- name: remove contents of {{ working_dir }}/test
+  shell: "rm -rf {{ working_dir }}/test/*"
+  become: yes

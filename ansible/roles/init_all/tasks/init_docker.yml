@@ -1,0 +1,24 @@
+---
+- name: start docker
+  become: yes
+  shell: 'service docker start'
+
+- name: enable docker on startup
+  become: yes
+  shell: 'systemctl enable docker'
+
+- name: add docker group
+  become: yes
+  shell: 'groupadd docker'
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'already exists' not in cmd.stderr"
+
+- name: add user to docker group
+  become: yes
+  shell: 'usermod -aG docker ec2-user'
+
+- name: refresh docker group
+  meta: reset_connection
+

@@ -1,0 +1,5 @@
+---
+- name: chmod /var/run/docker.sock
+  # allow jenkins container to use the hosts docker for 'docker build ...'
+  shell: chmod 0666 /var/run/docker.sock
+  become: yes

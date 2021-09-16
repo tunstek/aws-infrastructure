@@ -1,0 +1,30 @@
+---
+- name: ensure {{ working_dir }}/test exists
+  file:
+    path: "{{ working_dir }}/test"
+    state: directory
+
+- name: ensure {{ working_dir }}/dockerfiles exists
+  file:
+    path: "{{ working_dir }}/dockerfiles"
+    state: directory
+
+- name: ensure {{ working_dir }}/test/public_api/app exists
+  file:
+    path: "{{ working_dir }}/test/public_api/app"
+    state: directory
+
+- name: ensure {{ working_dir }}/test/auth/app exists
+  file:
+    path: "{{ working_dir }}/test/auth/app"
+    state: directory
+
+- name: ensure {{ working_dir }}/test/auth/redis/data exists
+  file:
+    path: "{{ working_dir }}/test/auth/redis/data"
+    state: directory
+
+- name: ensure {{ working_dir }}/test/newswatcher/app exists
+  file:
+    path: "{{ working_dir }}/test/newswatcher/app"
+    state: directory

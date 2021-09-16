@@ -1,0 +1,9 @@
+- hosts:
+    - leader
+    - managers
+  roles:
+    - prepare_jenkins_nodes
+
+- hosts: leader
+  roles:
+    - deploy_jenkins_stack

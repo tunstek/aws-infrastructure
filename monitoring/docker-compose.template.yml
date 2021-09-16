@@ -1,0 +1,124 @@
+version: '3.7'
+
+services:
+
+  ################################################################
+  # Prometheus
+  #  - runs on manager node
+  ################################################################
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ${WORKING_DIR:-/mnt/efs}/monitoring/prometheus.yml:/prometheus/prometheus.yml
+      - ${WORKING_DIR:-/mnt/efs}/monitoring/prometheus/data:/prometheus/data
+    ports:
+      - "9090:9090" # make it accessible to grafana on prometheus:9090
+    command:
+      - '--config.file=/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus/data'
+    networks:
+      - traefik-public
+      - monitoring
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.services.prometheus.loadbalancer.server.port=9090
+        - traefik.http.routers.prometheus.rule=Host(`prometheus.example.com`)
+        - traefik.http.routers.prometheus.entrypoints=http
+        # HTTPS
+        - traefik.http.middlewares.prometheus-redirect-sec.redirectscheme.scheme=https
+        - traefik.http.routers.prometheus.middlewares=prometheus-redirect-sec
+        - traefik.http.routers.prometheus-sec.rule=Host(`prometheus.example.com`)
+        - traefik.http.routers.prometheus-sec.entrypoints=https
+        - traefik.http.routers.prometheus-sec.tls.certResolver=dnsCertResolver
+        - traefik.http.routers.prometheus-sec.tls.domains[0].main=*.example.com
+        # Basic Auth
+        - traefik.http.middlewares.prometheus-sec-auth.basicauth.usersfile=/auth/.htpasswd
+        - traefik.http.middlewares.prometheus-sec-auth.basicauth.realm=prometheus
+        - traefik.http.middlewares.prometheus-sec-auth.basicauth.removeheader=true
+        - traefik.http.routers.prometheus-sec.middlewares=prometheus-sec-auth
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.type!=swarm-leader
+          - node.role == manager
+
+
+  ################################################################
+  # The promethes node-exporter
+  # For each node a separte service need to be added
+  # The node-exporter.template.yml is used to generate node-exporters for each node
+  ################################################################
+
+  #$$NODE-EXPORTERS$$
+
+  ################################################################
+  # END NODE-EXPORTERS.....
+  ################################################################
+
+
+  ################################################################
+  # cAdvisor
+  #   - runs on every node
+  # The cadvisor.template.yml is used to generate cadvisors for each node
+  ################################################################
+
+  #$$CADVISORS$$
+
+  ################################################################
+  # END CADVISORS.....
+  ################################################################
+
+
+  ################################################################
+  # Grafana
+  #  - runs on manager node
+  ################################################################
+  grafana:
+    image: grafana/grafana
+    #environment:
+    #  GF_SMTP_ENABLED: "true"
+    #  GF_SMTP_HOST: "mailgateway:25"
+    #  GF_SMTP_FROM_ADDRESS: "alert@myhost.com"
+    volumes:
+      - ${WORKING_DIR:-/mnt/efs}/monitoring/grafana:/var/lib/grafana:z
+    networks:
+      - traefik-public
+      - monitoring
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.services.monitoring.loadbalancer.server.port=3000
+        - traefik.http.routers.monitoring.rule=Host(`monitoring.example.com`)
+        - traefik.http.routers.monitoring.entrypoints=http
+        # HTTPS
+        - traefik.http.middlewares.monitoring-redirect-sec.redirectscheme.scheme=https
+        - traefik.http.routers.monitoring.middlewares=monitoring-redirect-sec
+        - traefik.http.routers.monitoring-sec.rule=Host(`monitoring.example.com`)
+        - traefik.http.routers.monitoring-sec.entrypoints=https
+        - traefik.http.routers.monitoring-sec.tls.certResolver=dnsCertResolver
+        - traefik.http.routers.monitoring-sec.tls.domains[0].main=*.example.com
+        # Basic Auth
+        - traefik.http.middlewares.monitoring-sec-auth.basicauth.usersfile=/auth/.htpasswd
+        - traefik.http.middlewares.monitoring-sec-auth.basicauth.realm=monitoring
+        - traefik.http.middlewares.monitoring-sec-auth.basicauth.removeheader=true
+        - traefik.http.routers.monitoring-sec.middlewares=monitoring-sec-auth
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.type!=swarm-leader
+          - node.role == manager
+
+
+volumes:
+  grafana-data:
+
+
+networks:
+  traefik-public:
+    name: traefik-public
+    external: true
+  monitoring:
+    name: monitoring

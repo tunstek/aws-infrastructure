@@ -1,0 +1,13 @@
+ARG JENKINS_MASTER_IMAGE=jenkins/jenkins:lts-alpine
+FROM $JENKINS_MASTER_IMAGE
+#FROM jenkins/jenkins:lts-alpine
+
+USER root
+
+# install the docker client
+RUN apk add docker
+#RUN addgroup -S jenkins docker
+
+USER jenkins
+
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/jenkins.sh"]

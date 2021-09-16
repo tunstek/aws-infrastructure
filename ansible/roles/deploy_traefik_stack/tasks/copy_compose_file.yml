@@ -1,0 +1,9 @@
+---
+- name: copy docker-compose-traefik
+  copy:
+    src: ../../../docker-compose-traefik.yml
+    dest: '{{ working_dir }}/dockerfiles'
+    owner: '{{ ansible_user }}'
+
+- name: chmod the compose file
+  shell: chmod 644 {{ working_dir }}/dockerfiles/docker-compose-traefik.yml

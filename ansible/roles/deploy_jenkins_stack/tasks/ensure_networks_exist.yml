@@ -1,0 +1,21 @@
+---
+- name: ensure jenkins-public network is available
+  shell: docker network create -d overlay jenkins-public
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name jenkins-public already exists' not in cmd.stderr"
+
+- name: ensure registry network is available
+  shell: docker network create -d overlay registry
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name registry already exists' not in cmd.stderr"
+
+- name: create swarm-test network
+  shell: docker network create -d overlay swarm-test
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name swarm-test already exists' not in cmd.stderr"

@@ -1,0 +1,6 @@
+---
+# We assume the the compose file has already been copied here by Jenkins after a successful build
+- name: deploy the operator stack
+  shell: docker stack deploy --with-registry-auth --compose-file {{ working_dir }}/dockerfiles/docker-compose.yml theoperator
+  environment:
+    WORKING_DIR: '{{ working_dir }}'

@@ -1,0 +1,6 @@
+---
+- include: update_packages.yml
+- include: install_dependancies.yml
+- include: init_docker.yml
+- include: auto_mount_efs.yml
+- include: create_swap_space.yml

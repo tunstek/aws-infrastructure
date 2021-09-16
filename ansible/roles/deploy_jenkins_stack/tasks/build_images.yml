@@ -1,0 +1,14 @@
+---
+- name: build jenkins master image
+  shell: "docker build -t {{ registry_host }}/jenkins-master:latest -f {{ working_dir }}/dockerfiles/Dockerfile.jenkins.master {{ working_dir }}/dockerfiles"
+  register: master_build
+
+- name: build jenkins slave image
+  shell: "docker build -t {{ registry_host }}/jenkins-slave:latest -f {{ working_dir }}/dockerfiles/Dockerfile.jenkins.slave {{ working_dir }}/dockerfiles"
+  register: slave_build
+
+
+- debug:
+    msg:
+      - master image build output - {{ master_build.stdout | to_nice_yaml }}
+      - slave image build output - {{ slave_build.stdout | to_nice_yaml }}

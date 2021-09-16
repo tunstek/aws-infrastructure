@@ -1,0 +1,10 @@
+pytest==5.0.1
+pytest-html==1.12.0
+pytest-cov
+aiofiles
+requests==2.22.0
+redis==3.3.10
+influxdb==5.2.3
+pyjwt==1.7.1
+passlib[bcrypt]
+python-multipart

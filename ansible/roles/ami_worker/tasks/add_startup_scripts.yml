@@ -1,0 +1,6 @@
+---
+- name: Create crontab startup entry
+  cron:
+    name: "node startup script"
+    special_time: reboot
+    job: "bash /home/{{ ansible_user }}/node_setup.sh > /home/{{ ansible_user }}/cluster.log"

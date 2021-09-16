@@ -1,0 +1,22 @@
+---
+- name: install yum dependancies
+  become: yes
+  shell: 'yum install -y {{ item }}'
+  args:
+    warn: false
+  with_items:
+  - "{{ yum_dependancies }}"
+
+- name: install amazon dependancies
+  become: yes
+  shell: 'amazon-linux-extras install -y {{ item }}'
+  args:
+    warn: false
+  with_items:
+  - "{{ amazon_dependancies }}"
+
+- name: Install pip dependancies
+  pip:
+    name: '{{ pip_dependancies }}'
+    extra_args: --user
+

@@ -1,0 +1,20 @@
+---
+- name: ensure {{ working_dir }} exists
+  file:
+    path: "{{ working_dir }}"
+    state: directory
+
+- name: ensure {{ working_dir }}/registry/auth exists
+  file:
+    path: "{{ working_dir }}/registry/auth"
+    state: directory
+
+- name: ensure {{ working_dir }}/registry/library exists
+  file:
+    path: "{{ working_dir }}/registry/library"
+    state: directory
+
+- name: ensure {{ working_dir }}/dockerfiles exists
+  file:
+    path: "{{ working_dir }}/dockerfiles"
+    state: directory

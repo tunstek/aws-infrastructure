@@ -1,0 +1,3 @@
+---
+- name: label as swarm-leader
+  shell: docker node ls | grep '*' | awk '{print $1}' | xargs -n 1 docker node update --label-add type=swarm-leader

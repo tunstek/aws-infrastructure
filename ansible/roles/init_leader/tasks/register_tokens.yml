@@ -1,0 +1,21 @@
+---
+- name: register worker token
+  shell: docker swarm join-token worker | grep '\--token' | awk '{print $5}'
+  register: worker_token
+  failed_when: "'Error response from daemon' in worker_token.stderr"
+
+- name: register manager token
+  shell: docker swarm join-token manager | grep '\--token' | awk '{print $5}'
+  register: manager_token
+  failed_when: "'Error response from daemon' in manager_token.stderr"
+
+- name: add tokens to dummy host
+  add_host:
+    name: "SWARM_TOKEN_HOLDER"
+    worker_token: "{{ worker_token.stdout }}"
+    manager_token: "{{ manager_token.stdout }}"
+
+- debug:
+    msg:
+      - Registering worker token - {{ worker_token.stdout }}
+      - Registering manager token - {{ manager_token.stdout }}

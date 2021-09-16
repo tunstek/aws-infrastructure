@@ -1,0 +1,5 @@
+---
+- include: ensure_directory_structure.yml
+- include: copy_files.yml
+- include: compile.yml
+- include: deploy_stack.yml

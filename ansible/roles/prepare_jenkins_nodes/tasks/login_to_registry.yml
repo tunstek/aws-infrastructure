@@ -1,0 +1,3 @@
+---
+- name: login to docker registry
+  shell: 'docker login {{ registry_host }} -u {{ registry_username }} -p {{ registry_password }}'

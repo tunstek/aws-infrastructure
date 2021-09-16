@@ -1,0 +1,3 @@
+---
+# TODO: Stop docker service + uninstall docker ??
+- include: leave_swarm.yml

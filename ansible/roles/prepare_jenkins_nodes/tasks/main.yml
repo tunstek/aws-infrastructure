@@ -1,0 +1,3 @@
+---
+- include: set_docker_socket_permissions.yml
+- include: login_to_registry.yml

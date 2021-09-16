@@ -1,0 +1,14 @@
+---
+- name: Init Manager Node
+  shell: docker swarm init --force-new-cluster
+  #register: cmd
+  #failed_when:
+  #  - cmd.rc != 0
+  #  - "'This node is already part of a swarm' not in cmd.stderr"
+
+- name: Remove any previous stacks
+  shell: docker stack ls | grep -v 'NAME' | awk '{print $1}' | xargs -n 1 docker stack rm
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'requires at least 1 argument' not in cmd.stderr"

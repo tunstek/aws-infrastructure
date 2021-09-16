@@ -1,0 +1,9 @@
+---
+- name: copy docker-compose-registry
+  copy:
+    src: ../../../docker-compose-registry.yml
+    dest: '{{ working_dir }}/dockerfiles'
+    owner: '{{ ansible_user }}'
+
+- name: chmod the compose file
+  shell: chmod 644 {{ working_dir }}/dockerfiles/docker-compose-registry.yml

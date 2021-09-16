@@ -1,0 +1,74 @@
+version: "3.7"
+services:
+
+  traefik:
+    image: traefik:v2.1
+    container_name: traefik
+    command: >
+      --accessLog=true
+      --log.level=INFO
+      --api.dashboard=true
+      --providers.docker=true
+      --providers.docker.endpoint=unix:///var/run/docker.sock
+      --providers.docker.swarmmode=true
+      --providers.docker.exposedbydefault=false
+      --entrypoints.http.address=:80
+      --entrypoints.https.address=:443
+      --certificatesResolvers.dnsCertResolver.acme.email=user@example.com
+      --certificatesResolvers.dnsCertResolver.acme.storage=letsencrypt/acme.json
+      --certificatesResolvers.dnsCertResolver.acme.dnsChallenge=true
+      --certificatesResolvers.dnsCertResolver.acme.dnsChallenge.provider=route53
+      --certificatesResolvers.dnsCertResolver.acme.dnsChallenge.delayBeforeCheck=0
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/efs/traefik/letsencrypt:/letsencrypt
+      - /mnt/efs/traefik/auth:/auth
+    networks:
+      - swarm-network # make this service available through other nodes
+      - traefik-public
+      - jenkins-public
+    #environment:
+      #- AWS_HOSTED_ZONE_ID=
+      #- AWS_ACCESS_KEY_ID=
+      #- AWS_SECRET_ACCESS_KEY=
+    # Ran into 'too many open files' error on this service, needs further investigating (issue #56)
+    #ulimits:
+    #  nproc: 90000
+    #  nofile: 90000
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.api.rule=Host(`traefik.example.com`)
+        - traefik.http.routers.api.service=api@internal
+        - traefik.http.services.api.loadbalancer.server.port=8080 # required for swarmmode
+        # Setup HTTPS
+        - traefik.http.middlewares.api-redirect-sec.redirectscheme.scheme=https
+        - traefik.http.routers.api.middlewares=api-redirect-sec
+        - traefik.http.routers.api-sec.rule=Host(`traefik.example.com`)
+        - traefik.http.routers.api-sec.service=api@internal
+        - traefik.http.routers.api-sec.entrypoints=https
+        - traefik.http.routers.api-sec.tls.certResolver=dnsCertResolver
+        # Basic Auth
+        - traefik.http.middlewares.api-sec-auth.basicauth.usersfile=/auth/.htpasswd
+        - traefik.http.middlewares.api-sec-auth.basicauth.realm=traefik"
+        - traefik.http.routers.api-sec.middlewares=api-sec-auth
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.type!=swarm-leader
+
+
+networks:
+  swarm-network:
+    name: swarm-network
+    external: true
+  traefik-public:
+    name: traefik-public
+    external: true
+  jenkins-public:
+    name: jenkins-public
+    external: true

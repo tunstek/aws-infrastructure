@@ -1,0 +1,5 @@
+# THIS FILE SHOULD NORMALLY BE RAN BY JENKINS
+- hosts: leader
+  roles:
+    - remove_test_stack
+

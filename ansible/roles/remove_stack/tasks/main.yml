@@ -1,0 +1,4 @@
+---
+- include: remove_files.yml
+- include: remove_stack.yml
+

@@ -1,0 +1,2 @@
+---
+leader_ip: "{{ groups['leader'][0] }}"

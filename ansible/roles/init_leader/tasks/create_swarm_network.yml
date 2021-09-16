@@ -1,0 +1,7 @@
+---
+- name: create swarm network
+  shell: docker network create -d overlay swarm-network
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name swarm-network already exists' not in cmd.stderr"

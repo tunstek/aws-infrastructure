@@ -1,0 +1,16 @@
+ARG JENKINS_SLAVE_IMAGE=jenkins/jnlp-slave:alpine
+FROM $JENKINS_SLAVE_IMAGE
+#FROM jenkins/jnlp-slave:alpine
+
+USER root
+
+# install the docker client
+RUN apk add docker
+RUN apk add ansible
+RUN apk add curl
+RUN apk add jq
+#RUN addgroup -S jenkins docker
+
+USER jenkins
+
+ENTRYPOINT ["jenkins-slave"]

@@ -1,0 +1,15 @@
+---
+- hosts: leader
+  roles:
+    - remove_stack
+    - remove_test_stack
+    - remove_jenkins_stack
+    - remove_monitoring_stack
+    - remove_traefik_stack
+    - remove_registry_stack
+    - register_dynamic_hosts
+    - reset_workers
+
+- hosts: all
+  roles:
+    - reset_node

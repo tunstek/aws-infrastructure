@@ -1,0 +1,12 @@
+---
+- name: copy monitoring dir
+  copy:
+    src: ../../../monitoring/
+    dest: '{{ working_dir }}/monitoring/'
+    owner: '{{ ansible_user }}'
+    mode: '664'
+
+- name: change monitoring/compile.sh permissions to 774
+  file:
+    path: '{{ working_dir }}/monitoring/compile.sh'
+    mode: '774'

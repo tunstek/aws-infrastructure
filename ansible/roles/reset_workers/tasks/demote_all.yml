@@ -1,0 +1,7 @@
+---
+- name: Demote all other nodes to workers
+  shell: docker node ls | grep -v 'HOSTNAME' | grep -v '*' | awk '{print $1}' | xargs -n 1 docker node demote
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'requires at least 1 argument' not in cmd.stderr"

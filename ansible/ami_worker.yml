@@ -1,0 +1,5 @@
+- hosts: worker_ami
+  roles:
+    - init_all
+    - ami_worker
+

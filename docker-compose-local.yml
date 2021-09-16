@@ -1,0 +1,92 @@
+# This file contains the DIFFERENCES from docker-compose.yml
+
+# This file is for LOCAL TESTING with:
+#   docker-compose -f docker-compose.yml -f docker-compose-local.yml up
+
+version: "3.7"
+services:
+
+  public_api:
+    build: ./public_api
+    image: public_api:latest
+    container_name: public_api
+    ports:
+      - "5000:80"
+    volumes:
+          - ${PWD}/public_api/app:/app
+    networks:
+      - traefik-public
+      - auth
+      - services
+    command: /start-reload.sh # DEBUG ONLY, CHANGES WILL UPDATE ON-THE-FLY
+
+  auth:
+    build: ./auth
+    image: auth:latest
+    container_name: auth
+    ports:
+      - "5005:80"
+    volumes:
+      - ${PWD}/auth/app:/app
+    networks:
+      - traefik-public
+      - auth
+    command: /start-reload.sh # DEBUG ONLY, CHANGES WILL UPDATE ON-THE-FLY
+    restart: unless-stopped # influxdb can be slow to come up + requires time to create the admin user (requires restart)
+  redis:
+    image: redislabs/rejson
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ${PWD}/auth/redis/redis.config:/redis/redis.config # TESTING ONLY, DISABLES DATA LOADING
+    working_dir: /redis/data
+    command: ["redis-server", "/redis/redis.config"]
+    networks:
+      - auth
+  influxdb:
+    image: influxdb:alpine
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - ${PWD}/auth/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      #- ${PWD}/auth/influxdb:/var/lib/influxdb # TESTING ONLY, DISABLES DATA LOADING
+    environment:
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=jefSfPub487y2Kj3r874rbn87b3ewWGU
+    networks:
+      - auth
+
+  couchdb:
+    image: couchdb:latest
+    container_name: couchdb
+    ports:
+      - "5984:5984"
+    volumes:
+      - ${PWD}/couchdb/data:/opt/couchdb/data
+    networks:
+      - traefik-public
+      - services
+      - pyspider
+    environment:
+      - COUCHDB_USER=user
+      - COUCHDB_PASSWORD=password
+
+  #webservice:
+  #  networks:
+  #    - auth-test
+  #    - services-test # backend needs connection to couchDB for watchlist updates for example
+
+
+networks:
+  traefik-public:
+    name: traefik-public
+    external: true
+  registry:
+    name: registry
+    external: true
+  auth:
+    name: auth
+  services:
+    name: services

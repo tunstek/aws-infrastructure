@@ -1,0 +1,21 @@
+---
+- name: create traefik network
+  shell: docker network create -d overlay traefik-public
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name traefik-public already exists' not in cmd.stderr"
+
+- name: create registry network
+  shell: docker network create -d overlay registry
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name registry already exists' not in cmd.stderr"
+
+- name: create jenkins-public network
+  shell: docker network create -d overlay jenkins-public
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name jenkins-public already exists' not in cmd.stderr"

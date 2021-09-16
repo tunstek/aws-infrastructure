@@ -1,0 +1,5 @@
+---
+- name: Remove Stack Files
+  shell: "rm -rf {{ working_dir }}/newswatcher {{ working_dir }}/auth {{ working_dir }}/public_api"
+  become: yes
+

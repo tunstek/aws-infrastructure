@@ -1,0 +1,3 @@
+---
+- name: compile
+  shell: 'cd {{ working_dir }}/monitoring && ./compile.sh && cd -'

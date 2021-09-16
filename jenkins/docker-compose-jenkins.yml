@@ -1,0 +1,104 @@
+version: '3.7'
+services:
+  jenkins-master:
+    image: ${REGISTRY_HOST}/jenkins-master:latest
+    container_name: jenkins-master
+    environment:
+      - JAVA_OPTS=-Xms512M -Xmx512M
+    ports:
+      - '50000:50000'
+    volumes:
+      - /mnt/efs/jenkins/master:/var/jenkins_home
+      # mount the docker sock of the host so we can use the hosts docker service to build images (must be 0666)
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - jenkins-public # exposes jenkins to traefik
+      - jenkins-private # exposes slaves
+      - swarm-test # exposes the test stack
+      - registry
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=jenkins-public
+        - traefik.http.services.jenkins-master.loadbalancer.server.port=8080
+        - traefik.http.routers.jenkins-master.rule=Host(`jenkins.example.com`)
+        - traefik.http.routers.jenkins-master.entrypoints=http
+        # HTTPS
+        - traefik.http.middlewares.jenkins-master-redirect-sec.redirectscheme.scheme=https
+        - traefik.http.routers.jenkins-master.middlewares=jenkins-master-redirect-sec
+        - traefik.http.routers.jenkins-master-sec.rule=Host(`jenkins.example.com`)
+        - traefik.http.routers.jenkins-master-sec.entrypoints=https
+        - traefik.http.routers.jenkins-master-sec.tls.certResolver=dnsCertResolver
+        - traefik.http.routers.jenkins-master-sec.tls.domains[0].main=*.example.com
+        # Basic Auth
+        - traefik.http.middlewares.jenkins-master-sec-auth.basicauth.usersfile=/auth/.htpasswd
+        - traefik.http.middlewares.jenkins-master-sec-auth.basicauth.realm=jenkins
+        - traefik.http.middlewares.jenkins-master-sec-auth.basicauth.removeheader=true
+        - traefik.http.routers.jenkins-master-sec.middlewares=jenkins-master-sec-auth
+      placement:
+        constraints:
+          - node.labels.type==swarm-leader
+
+  # The slaves need to be defined individually because of the secret
+
+  jenkins-slave-1:
+    #image: jenkins/jnlp-slave:alpine
+    image: ${REGISTRY_HOST}/jenkins-slave:latest
+    container_name: jenkins-slave-1
+    environment:
+      - JENKINS_URL=http://jenkins-master:8080
+      - JENKINS_AGENT_NAME=slave-1
+      - JENKINS_SECRET=036b9ff32a045fb5f4fa303e2628ee6bec4af8db6e206fdc91b76be70b03d1cd
+      - JENKINS_AGENT_WORKDIR=/var/jenkins_home
+    volumes:
+      - /mnt/efs/jenkins/slave-1:/var/jenkins_home
+      # mount the docker sock of the host so we can use the hosts docker service to build images (must be 0666)
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - jenkins-private
+      - swarm-test # exposes the test stack
+      - registry
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==manager
+          - node.labels.type!=swarm-leader
+
+  jenkins-slave-2:
+    #image: jenkins/jnlp-slave:alpine
+    image: ${REGISTRY_HOST}/jenkins-slave:latest
+    container_name: jenkins-slave-2
+    environment:
+      - JENKINS_URL=http://jenkins-master:8080
+      - JENKINS_AGENT_NAME=slave-2
+      - JENKINS_SECRET=9c4c2e17bd2b10243907437e3da5db3f3492a277025b5cde1b2be13fc15f7ee4
+      - JENKINS_AGENT_WORKDIR=/var/jenkins_home
+    volumes:
+      - /mnt/efs/jenkins/slave-2:/var/jenkins_home
+      # mount the docker sock of the host so we can use the hosts docker service to build images (must be 0666)
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - jenkins-private
+      - swarm-test # exposes the test stack
+      - registry
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==manager
+          - node.labels.type!=swarm-leader
+
+networks:
+  jenkins-private:
+    name: jenkins-private
+  jenkins-public:
+    name: jenkins-public
+    external: true
+  swarm-test:
+    name: swarm-test
+    external: true
+  registry:
+    name: registry
+    external: true

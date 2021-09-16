@@ -1,0 +1,16 @@
+# The leader acts as an entrypoint to the cluster, runs the cluster Redis instance and is the jenkins master.
+# This node should not receive swarm tasks
+# Managers and worker nodes are deployed dynamically via AWS Spot Fleet
+# When new nodes want to join the cluster they simply ping the Redis instance running on this leader to receive the relevant join token
+[leader]
+## LEADER IP HERE
+
+[managers]
+# Managers act as Jenkins Slaves
+## MANAGER IPs HERE (optional)
+
+# AMI deployment. Use this to deploy AMI bases to be saved
+#[worker_ami]
+
+# The dynamic_hosts group is necessary and is populated dynamically in the register_dynamic_hosts role
+[dynamic_hosts]

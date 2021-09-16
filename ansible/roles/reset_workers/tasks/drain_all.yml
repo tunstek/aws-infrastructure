@@ -1,0 +1,3 @@
+---
+- name: Set all nodes as drain
+  shell: docker node ls | grep -v 'HOSTNAME' | awk '{print $1}' | xargs -n 1 docker node update --availability drain

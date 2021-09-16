@@ -1,0 +1,82 @@
+
+# I've tried to run this file as an extension to the production docker-compose in order to reduce code duplication. But this leads to too many problems. For example it's impossible to overwrite volumes and networks and so the test services will be attached to the production networks and test and production files have to overwrite each other.
+# This is far from ideal, as a result, this file is now completely separate from the production deployment file.
+
+# The service names need to remain the same as they are used for DNS resolution internally.
+# The test and production services run on completely different networks and are therefore separated
+
+version: "3.7"
+services:
+
+  public_api:
+    image: localhost:5443/public_api:test
+    networks:
+      - swarm-test
+      - auth-test
+      - services-test
+    volumes:
+      - ${WORKING_DIR:-/mnt/efs}/test/public_api/app:/app
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.type!=swarm-leader
+
+  auth:
+    image: localhost:5443/auth:test
+    volumes:
+      - ${WORKING_DIR:-/mnt/efs}/test/auth/app:/app
+    networks:
+      - swarm-test
+      - auth-test
+    restart: unless-stopped
+    depends_on:
+      - redis
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.type!=swarm-leader
+  redis:
+    image: redislabs/rejson
+    networks:
+      - auth-test
+    volumes:
+      - ${WORKING_DIR:-/mnt/efs}/test/auth/redis/redis.config:/redis/redis.config # TESTING ONLY, DISABLES ANY DATA LOADING
+    working_dir: /redis/data
+    command: ["redis-server", "/redis/redis.config"]
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.type!=swarm-leader
+
+  #couchdb:
+  #  networks:
+  #    - services-test
+  #    - pyspider-test
+
+  #webservice:
+  #  networks:
+  #    - auth-test
+  #    - services-test # backend needs connection to couchDB for watchlist updates for example
+
+
+networks:
+  swarm-test:
+    name: swarm-test
+    external: true
+  registry-test:
+    name: registry-test
+    external: true
+  pyspider-test:
+    name: pyspider-test
+    external: true
+  auth-test:
+    name: auth-test
+    external: true
+  services-test:
+    name: services-test
+    external: true

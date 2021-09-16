@@ -1,0 +1,7 @@
+---
+- name: join worker nodes
+  shell: docker swarm join --token {{ hostvars['SWARM_TOKEN_HOLDER']['worker_token'] }} {{ leader_ip }}
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'This node is already part of a swarm' not in cmd.stderr"

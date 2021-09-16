@@ -1,0 +1,14 @@
+---
+- name: ensure {{ working_dir }} exists
+  # Fail if this dir does not exist (EFS has not been mounted)
+  stat:
+    path: "{{ working_dir }}"
+  register: stat_result
+- fail:
+    msg: "The path: {{ working_dir }} was not found. Has it been mounted correctly?"
+  when: stat_result.stat.exists == False
+
+- name: ensure {{ working_dir }}/dockerfiles exists
+  file:
+    path: "{{ working_dir }}/dockerfiles"
+    state: directory

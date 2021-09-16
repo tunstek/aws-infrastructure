@@ -1,0 +1,9 @@
+---
+- name: copy Jenkins Dockerfiles and docker-compose
+  copy:
+    src: ../../../jenkins/
+    dest: '{{ working_dir }}/dockerfiles'
+    owner: '{{ ansible_user }}'
+
+- name: chmod the compose file
+  shell: chmod 644 {{ working_dir }}/dockerfiles/docker-compose-jenkins.yml

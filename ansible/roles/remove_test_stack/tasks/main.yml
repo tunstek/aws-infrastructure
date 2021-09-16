@@ -1,0 +1,3 @@
+---
+- name: Remove Test Stack
+  command: docker stack rm theoperator-test

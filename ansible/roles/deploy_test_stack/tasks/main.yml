@@ -1,0 +1,7 @@
+---
+# JENKINS ONLY
+- include: delete_previous_test_files.yml
+- include: ensure_directory_structure.yml
+- include: copy_files.yml
+- include: create_test_networks.yml
+- include: deploy_stack.yml

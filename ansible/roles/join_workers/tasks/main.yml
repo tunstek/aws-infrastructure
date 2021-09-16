@@ -1,0 +1,2 @@
+---
+- include: join_workers.yml

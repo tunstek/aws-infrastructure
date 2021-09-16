@@ -1,0 +1,4 @@
+---
+- include: drain_all.yml
+- include: demote_all.yml
+#- include: remove_all.yml # This only removes the node from the 'docker node ls' list!

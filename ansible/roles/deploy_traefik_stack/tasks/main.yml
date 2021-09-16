@@ -1,0 +1,6 @@
+---
+- include: ensure_directory_structure.yml
+- include: create_.htpasswd.yml
+- include: create_traefik_networks.yml
+- include: copy_compose_file.yml
+- include: deploy_stack.yml

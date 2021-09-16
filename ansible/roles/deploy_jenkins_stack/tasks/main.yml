@@ -1,0 +1,7 @@
+---
+- include: ensure_directory_structure.yml
+- include: ensure_networks_exist.yml
+- include: copy_docker_files.yml
+- include: build_images.yml
+- include: push_images.yml
+- include: deploy_stack.yml

@@ -1,0 +1,9 @@
+
+.screener-container {
+  position: relative;
+  width: 98vw;
+  height: 90vh;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+}

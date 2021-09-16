@@ -1,0 +1,3 @@
+---
+- include: copy_files.yml
+- include: add_startup_scripts.yml

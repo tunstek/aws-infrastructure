@@ -1,0 +1,6 @@
+---
+# during running, if a manger node goes down, it should be replaced by another node
+# therefore when we want to remove the cluster, we don't actually know which node
+# is the manager
+- name: leave the swarm
+  command: docker swarm leave --force

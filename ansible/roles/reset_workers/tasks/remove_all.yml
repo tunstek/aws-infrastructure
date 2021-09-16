@@ -1,0 +1,3 @@
+---
+- name: Remove all other nodes from swarm
+  shell: docker node ls | grep -v 'HOSTNAME' | grep -v '*' | awk '{print $1}' | xargs -n 1 docker node rm --force

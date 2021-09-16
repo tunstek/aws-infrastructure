@@ -1,0 +1,15 @@
+---
+- name: deploy jenkins stack
+  shell: docker stack deploy --with-registry-auth --compose-file {{ working_dir }}/dockerfiles/docker-compose-jenkins.yml theoperator-jenkins
+  environment:
+    REGISTRY_HOST: '{{ registry_host }}'
+  register: cmd
+
+- debug:
+    msg:
+      - stack deploy output - {{ cmd.stdout }}
+
+### TODO: Install and run Docker - NEEDS TO BE ADDED TO THE IMAGE ITSELF (having problems with plugin installs)
+# docker exec -it --user=root --privileged 0c70818408f5 /bin/sh
+# apk add docker
+# addgroup -S jenkins docker

@@ -1,0 +1,8 @@
+---
+# JENKINS ONLY
+#   NOTE: Test stack deployment has already copied over and built the images.
+#     Jenkins will test the :test images and on pass, will re-tag those images as :latest and simply deploy as production
+- include: ensure_directory_structure.yml
+- include: copy_files.yml
+- include: create_networks.yml
+- include: deploy_stack.yml

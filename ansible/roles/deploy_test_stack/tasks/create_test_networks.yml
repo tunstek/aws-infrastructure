@@ -1,0 +1,35 @@
+---
+- name: create swarm-test network
+  shell: docker network create -d overlay swarm-test
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name swarm-test already exists' not in cmd.stderr"
+
+- name: create services-test network
+  shell: docker network create -d overlay services-test
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name services-test already exists' not in cmd.stderr"
+
+- name: create registry-test network
+  shell: docker network create -d overlay registry-test
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name registry-test already exists' not in cmd.stderr"
+
+- name: create auth-test network
+  shell: docker network create -d overlay auth-test
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name auth-test already exists' not in cmd.stderr"
+
+- name: create pyspider-test network
+  shell: docker network create -d overlay pyspider-test
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name pyspider-test already exists' not in cmd.stderr"

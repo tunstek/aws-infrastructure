@@ -1,0 +1,12 @@
+.navbar {
+    margin-bottom: 10px;
+}
+
+.navbar li {
+  margin-right: 25px;
+}
+
+.navbar .active-link {
+  color: blue !important;
+  border-radius: 5px;
+}

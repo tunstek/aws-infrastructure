@@ -1,0 +1,4 @@
+---
+- name: Remove Traefik Stack
+  command: docker stack rm theoperator-traefik
+

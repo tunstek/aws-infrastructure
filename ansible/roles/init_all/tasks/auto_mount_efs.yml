@@ -1,0 +1,19 @@
+---
+- name: check /etc/fstab
+  # only add the line: 'fs-db149310:/ /mnt/efs efs defaults,_netdev 0 0' if it is not already present
+  shell: grep -qxF 'fs-db149310:/ /mnt/efs efs defaults,_netdev 0 0' /etc/fstab || sed -i.bak 's/#/#\nfs\-db149310:\/ \/mnt\/efs efs defaults,_netdev 0 0/g' /etc/fstab
+  become: yes
+
+- name: ensure /mnt/efs exists
+  file:
+    path: /mnt/efs
+    state: directory
+  become: yes
+
+- name: mount /mnt/efs
+  shell: mount /mnt/efs
+  register: cmd
+  become: yes
+  failed_when:
+    - cmd.rc != 0
+    - "'/mnt/efs is busy or already mounted' not in cmd.stderr"

@@ -1,0 +1,7 @@
+---
+- name: copy node_setup.sh
+  copy:
+    src: ../../../node_setup.sh
+    dest: '/home/{{ ansible_user }}/node_setup.sh'
+    owner: '{{ ansible_user }}'
+    mode: '755'

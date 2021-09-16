@@ -1,0 +1,4 @@
+---
+- name: Remove Monitoring Stack
+  command: docker stack rm monitoring
+

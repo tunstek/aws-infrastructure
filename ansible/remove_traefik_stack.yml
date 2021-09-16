@@ -1,0 +1,4 @@
+- hosts: leader
+  roles:
+    - remove_traefik_stack
+

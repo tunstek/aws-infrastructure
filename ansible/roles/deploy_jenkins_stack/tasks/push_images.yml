@@ -1,0 +1,6 @@
+---
+- name: push jenkins master image
+  shell: "docker push {{ registry_host }}/jenkins-master:latest"
+
+- name: push jenkins slave image
+  shell: "docker push {{ registry_host }}/jenkins-slave:latest"

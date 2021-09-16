@@ -1,0 +1,37 @@
+
+.category-container {
+  position: relative;
+  width: 100%;
+  margin: auto;
+  margin-top: 15px;
+}
+
+.article-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.articleCard {
+  position: relative;
+  flex-basis: 30%;
+  margin: 15px;
+}
+@media screen and (max-width: 992px) {
+  .articleCard {
+    flex-basis: 46%;
+  }
+}
+@media screen and (max-width: 600px) {
+  .articleCard {
+    flex-basis: 95%;
+  }
+}
+
+.calendar-container {
+  position: relative;
+  height: 750px;
+  width: 95%;
+  margin-top: 15px;
+  align-content: center;
+}

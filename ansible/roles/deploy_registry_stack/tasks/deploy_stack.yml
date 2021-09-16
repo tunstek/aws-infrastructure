@@ -1,0 +1,3 @@
+---
+- name: deploy registry stack
+  shell: docker stack deploy --compose-file {{ working_dir }}/dockerfiles/docker-compose-registry.yml theoperator-registry

@@ -1,0 +1,7 @@
+---
+- include: ensure_directory_structure.yml
+- include: create_registry_network.yml
+- include: generate_certificates.yml
+- include: generate_htpasswd.yml
+- include: copy_compose_file.yml
+- include: deploy_stack.yml

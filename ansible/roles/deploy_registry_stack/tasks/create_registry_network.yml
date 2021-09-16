@@ -1,0 +1,7 @@
+---
+- name: create registry network
+  shell: docker network create -d overlay registry
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name registry already exists' not in cmd.stderr"

@@ -1,0 +1,5 @@
+- hosts: leader
+  roles:
+    - remove_registry_stack # secrets need to be removed so the stack needs to be brought down
+    - deploy_registry_stack
+

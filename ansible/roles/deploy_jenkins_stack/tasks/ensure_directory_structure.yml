@@ -1,0 +1,17 @@
+---
+- name: ensure {{ working_dir }}/jenkins exists
+  file:
+    path: "{{ working_dir }}/jenkins"
+    state: directory
+
+- name: ensure {{ working_dir }}/dockerfiles exists
+  file:
+    path: "{{ working_dir }}/dockerfiles"
+    state: directory
+
+- name: ensure registry network is available
+  shell: docker network create -d overlay registry
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name registry already exists' not in cmd.stderr"

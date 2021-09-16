@@ -1,0 +1,28 @@
+---
+- name: create services network
+  shell: docker network create -d overlay services
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name services already exists' not in cmd.stderr"
+
+- name: create registry network
+  shell: docker network create -d overlay registry
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name registry already exists' not in cmd.stderr"
+
+- name: create auth network
+  shell: docker network create -d overlay auth
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name auth already exists' not in cmd.stderr"
+
+- name: create pyspider network
+  shell: docker network create -d overlay pyspider
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'network with name pyspider already exists' not in cmd.stderr"

@@ -1,0 +1,14 @@
+---
+- name: ensure {{ working_dir }}/monitoring/grafana exists
+  file:
+    path: "{{ working_dir }}/monitoring/grafana"
+    state: directory
+    mode: '777' # WORKAROUND for grafana "mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied"
+
+- name: ensure {{ working_dir }}/monitoring/prometheus/data exists
+  file:
+    path: "{{ working_dir }}/monitoring/prometheus/data"
+    state: directory
+    mode: '777' # WORKAROUND for grafana "mkdir: can't create directory '/var/lib/grafana/plugins': Permission denied"
+
+# TODO: Switch to distributed volumes

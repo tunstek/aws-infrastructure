@@ -1,0 +1,20 @@
+---
+# Deploy a redis container for storing and distributing swarm keys
+- name: Deploy a local redis container
+  #shell: docker run --name=redis-devel --publish=6379:6379 --hostname=redis --detach redis:latest
+  docker_container:
+    name: swarm-redis
+    image: redis:alpine
+    command: 'redis-server --appendonly yes --requirepass {{ redis_password }}'
+    recreate: yes
+    hostname: redis
+    published_ports:
+      - "6379:6379"
+    volumes:
+      - redis-volume
+
+# Push swarm tokens to redis
+- name: Save manager token to redis
+  shell: "redis-cli -a o3098hownjrw3hiubwRMNWb3uiw93m set swarm-manager-token {{ hostvars['SWARM_TOKEN_HOLDER']['manager_token'] }}"
+- name: Save worker token to redis
+  shell: "redis-cli -a o3098hownjrw3hiubwRMNWb3uiw93m set swarm-worker-token {{ hostvars['SWARM_TOKEN_HOLDER']['worker_token'] }}"

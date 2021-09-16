@@ -1,0 +1,21 @@
+- hosts: leader, managers
+  roles:
+    - init_all
+
+- hosts: leader
+  roles:
+    - init_leader
+
+- hosts: managers
+  roles:
+    - join_managers
+
+# WORKERS NOW JOIN OVER A HTTP HANDSHAKE (SPOT-FLEET)
+
+# auto deploy the stacks
+- hosts: leader
+  roles:
+    - deploy_registry_stack
+    - deploy_traefik_stack
+    - deploy_jenkins_stack
+    - deploy_monitoring_stack

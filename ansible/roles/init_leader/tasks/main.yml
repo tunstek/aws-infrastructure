@@ -1,0 +1,7 @@
+---
+- include: ensure_directory_structure.yml
+- include: init_swarm.yml
+- include: create_swarm_network.yml
+- include: register_tokens.yml
+- include: label_as_leader.yml
+- include: deploy_redis.yml

@@ -1,0 +1,23 @@
+---
+- name: generate self-signed cert (registry.key.pem and registry.crt.pem)
+  shell: openssl req -x509 -nodes -newkey rsa:4096 -keyout {{ working_dir }}/registry/auth/registry.key.pem -out {{ working_dir }}/registry/auth/registry.crt.pem -days 365 -subj '/CN=localhost'
+
+- name: remove previous key secret
+  shell: docker secret rm certificates.registry.key
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'No such secret' not in cmd.stderr"
+
+- name: remove previous cert secret
+  shell: docker secret rm certificates.registry.crt
+  register: cmd
+  failed_when:
+    - cmd.rc != 0
+    - "'No such secret' not in cmd.stderr"
+
+- name: add private key to docker secret
+  shell: docker secret create certificates.registry.key {{ working_dir }}/registry/auth/registry.key.pem
+
+- name: add public cert to docker secret
+  shell: docker secret create certificates.registry.crt {{ working_dir }}/registry/auth/registry.crt.pem

@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+
+  registry:
+    image: 'registry:2'
+    container_name: registry
+    ports:
+      - '5443:443' # Expose the service so it can be accessed via localhost:5443 on any node. 443 is taken by traefik
+    volumes:
+      - /mnt/efs/registry/library:/var/lib/registry
+    environment:
+      REGISTRY_HTTP_ADDR: 0.0.0.0:443
+      REGISTRY_HTTP_TLS_KEY: /run/secrets/registry.key
+      REGISTRY_HTTP_TLS_CERTIFICATE: /run/secrets/registry.crt
+      REGISTRY_HTTP_SECRET: vgRtG70dx6TuLj3yS1zBioPl7o1nkivJKYIAMt1K8wJscJies0cz0L830CB3vhpE5uwRYCygWz984lbf
+    secrets:
+      - registry.key
+      - registry.crt
+    networks:
+      - registry
+    deploy:
+      replicas: 1 # multiple registries gives 'unknown blob' error on push, probably an issue with EFS
+      placement:
+        constraints:
+          - node.labels.type==swarm-leader
+
+
+networks:
+  swarm-network:
+    name: swarm-network
+    external: true
+  registry:
+    name: registry
+    external: true
+
+
+secrets:
+  registry.key:
+    external: true
+    name: certificates.registry.key
+  registry.crt:
+    external: true
+    name: certificates.registry.crt

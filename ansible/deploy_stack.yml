@@ -1,0 +1,4 @@
+# THIS FILE SHOULD NORMALLY BE RAN BY JENKINS
+- hosts: leader
+  roles:
+    - deploy_stack

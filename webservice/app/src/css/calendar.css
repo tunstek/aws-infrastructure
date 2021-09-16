@@ -1,0 +1,26 @@
+
+.datepicker-table {
+  position: relative;
+  width: 80%;
+  margin: 40px auto 40px auto;
+  table-layout: fixed;
+  box-shadow: 0 0 5px #999;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.datepicker-table td {
+  text-align: center;
+  padding: 25px;
+  border-style: solid;
+  border-color: red;
+  border-width: 1px;
+}
+
+.active {
+  background-color: #f5f5f5;
+}
+
+.datepicker-table td:hover {
+  background-color: #f5f5f5;
+}
