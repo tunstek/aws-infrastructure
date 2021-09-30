@@ -1,32 +1,69 @@
+# AWS Infrastructure Deployment
+AWS Docker Swarm deployment over Spot Fleet made easy!
+
+
+Services include:
+* Traefik Reverse Proxy + LetsEncrypt
+* Swarm Monitoring via Prometheus and Grafana
+* Example Frontend With Login Page
+* Example Backend API
+* Jenkins Deployment
+
+
+This project is the remnants of a financial services API I was working on some time ago (theoperator.io). The idea was very similar to that of alphavantage.co. theoperator.io has been abandoned for some time but I've recently started working on a new project and decided to not let the work here go to waste.
+
 
 ## Setup
-- Create an AWS access policy (TODO: create list of open ports)
+- Create an AWS access policy (See below for example)
+- Create an AWS EC2 Security Group (See below for example)
 - Create 3 Elastic IPs in AWS (1 for leader and 2 for managers)
 - Add the Leader Elastic IP as an A DNS entry in Route 53 hosted zone
 - Spin up 3 instances
-- Associate the IPs with an instances
+- Associate the IPs with the instances
 - Ensure you can ssh into each machine with your .pem
 - Add your .pem to ansible/
 - Add IPs to ansible/hosts
 - Add relevant info to ansible/group_vars/all
 - Edit .env as required
-- replace security details in auth/app/auth_functions.py (TODO: use .env)
+- Run ```ansible-playbook deploy_cluster.yml```
+- Configure Jenkins as required
+- See ```ansible/``` for other scripts to run
 
 ## TODO
+- Fix Frontend Example
+- Fix Backend API Example
+- Fix Jenkins Deployment (Slave connection issues)
 - Configure services deployed via .env
 - Hide API test urls behind a .htpasswd
 - Add influxDB for API access tracking
-- Fix Jenkins Deployment (Slave connection issues)
-
-Recommended to run 3 nodes (1 leader and 2 managers)
+- Replace security details in auth/app/auth_functions.py (TODO: use .env)
 
 
+It's recommended to run 3 nodes (1 leader and 2 managers), especially for a Jenkins deployment but it's not entirely necessary
 
-## Links
-https://www.figma.com/file/entK0Sk5PdacaXFLJjTQCP/Landing-Page-Design
+Rebalance a service across all nodes using:
+`docker service update --force <servicename>`
 
-EXAMPLE TRAEFIK LETSENCRYPT AWS ACCESS POLICY
-'''
+## Example EC2 Security Group
+| Port      | Protocol | Description |
+| --------- | -------- | ----------- |
+| 80        | TCP      | HTTP Access |
+| 443       | TCP      | HTTPS Access|
+| 8080      | TCP      | Traefik Load Balancer Port |
+| 9090      | TCP      | Prometheus Port |
+| 2377      | TCP      | Docker Swarm Join Port |
+| 50000     | TCP      | Jenkins Agent Listener |
+| 7946      | TCP      | Docker Coms |
+| 7946      | UDP      | Docker Coms |
+| 4789      | UDP      | Docker Swarm Overlay |
+| 22        | TCP      | SSH
+
+
+
+
+
+## Example Traefik LetsEncrypt AWS Access Policy
+```
 {
    "Version": "2012-10-17",
    "Statement": [
@@ -51,33 +88,28 @@ EXAMPLE TRAEFIK LETSENCRYPT AWS ACCESS POLICY
        }
    ]
 }
-'''
-
-## Services
-### Webservice
-The webservice has two forms of deployment:
-- Debug (Dockerfile) - allows hot reloading
-- Production (Dockerfile.prod)
+```
 
 
-## Deployment
-1) Edit `ansible/hosts`
-2) Run `ansible-playbook deploy_cluster.yml`
-- Initialises the cluster and the swarm-leader.
-- Deploys the private docker registry and Traefik
-3) Ensure user is present in /mnt/efs/traefik/auth/.htpasswd
-- Default user: 'user'
-4) Run `ansible-playbook deploy-jenkins-stack.yml`
-- Builds and pushes `jenkins/` dockerfiles to the registry
-- Deploys jenkins with `ansible/hosts/manager` as master and `ansible/hosts/managers` as slaves
 
-Jenkins will then:
-1) Automatically pull the latest master branch
-2) See `Jenkins Testing & Deployment` below from 2) onwards
+### Spot Fleet + Discovery
+The main deployment happens over an AWS Spot Fleet. Our 'swarm-leader' in Ansible has an AWS Elastic IP attached and is a Free Tier AWS instance. This swarm leader is running a private redis container that exposes the redis port publicly (password protected). This allows spot instances that come up to ping the swarm leader and receive either a worker token or a manager token.
+
+Due to using a Spot Fleet in this configuration, an AMI need to be created in order to run the correct swarm join script at startup:
+- Worker Node AMI
+
+NOTE: Jenkins nodes (as managers) had previously been considered for spot fleet deployment, but after thinking about it. All managers should be on-demand instances. I don't want AWS coming along and pulling 2 of my 3 managers at the same time (very possible). This would bring down the whole cluster.
+
+#### AMI Creation
+1) Manually SSH into a fresh machine
+2) `sudo yum install -y python3`
+3) On Ansible host `ansible-playbook ami_worker.yml`
+4) Create image from machine using the AWS console
+
 
 
 ### Jenkins Testing & Deployment
-For the testing, it makes sense run unit tests on each individual service. This will then also allow code coverage to be estimated.
+For the testing, it makes sense run unit tests on each individual service you run. This will then also allow code coverage to be estimated.
 The challenge here will be to merge all the tests at the end.
 
 Jenkins will:
@@ -98,28 +130,8 @@ Jenkins will:
 NOTE: In order for builds to be independant, we need to deploy separate TEST stacks for each build.
 
 
-### Spot Fleet + Discovery
-The main deployment happens over an AWS Spot Fleet. Our 'swarm-leader' in Ansible has an AWS Elastic IP attached and is a Free Tier AWS instance. This swarm leader is running a private redis container that exposes the redis port publicly (password protected). This allows spot instances that come up to ping the swarm leader and receive either a worker token or a manager token.
-
-Due to using a Spot Fleet in this configuration, an AMI need to be created in order to run the correct swarm join script at startup:
-- Worker Node AMI
-
-NOTE: Jenkins nodes (as managers) had previously been considered for spot fleet deployment, but after thinking about it. All managers should be on-demand instances. I don't want AWS coming along and pulling 2 of my 3 managers at the same time (very possible). This would bring down the whole cluster.
-
-#### AMI Creation
-1) Manually SSH into a fresh machine
-2) `sudo yum install -y python3`
-3) On Ansible host `ansible-playbook ami_worker.yml`
-4) Create image from machine using the AWS console
-
-#### Deployment
-Deployment takes place over 3 AWS on-demand servers (all managers, 1 Jenkins master and 2 slaves) and an AWS Spot Fleet (all other workers).
-
-##### Docker Registry
+### Docker Registry
 The docker registry exposes port 5000 on the swarm and is therefore available via `localhost:5000` outside of containers
-
-Rebalance a service across all nodes
-`docker service update --force <servicename>`
 
 
 ## Service Routing
@@ -132,29 +144,10 @@ Rebalance a service across all nodes
 | auth          | 5005:80                   | proxy, auth | - |
 | redis         | 6379:6379                 | auth | - |
 | newswatcher   | 5001:80                   | services | - |
-| ml            | 5003:80                   | services | - |
 | couchdb       | 5984:5984                 | services | - |
-| cp_api        | 5002:5000                 | services | - |
-| cp_api_tickle | -                         | services | - |
+
 
 
 ## Notes
-#### Squid
-Looked into using Squid as a caching proxy for Newswatcher but the limited
-number of hits just makes it unnecessary. Was using it with SSLBump but
-even still was not really worth it. Perhaps it's something to return to
-but changing how the frontend renders would be a better option, performance
-wise, at least for now.
 #### Couchbase
 Tried running Couchbase but seemed very heavy on CPU usage even when idle
-
-
-## Docs
-* [Architecture Diagram](https://www.draw.io/#G19WiOu5iuHFkxGLIrx_VL9KFxu7vv7LRO)
-* [Login Token Sequence Diagram](https://www.draw.io/#G1M99GkqlApCWhzHSogWWaD86JwQBS6Sxc)
-* [Frontend Request Sequence Diagram](https://www.draw.io/#G1k5xzzcJwcICtyH0tLc5-yLTa2VDskGCC)
-* [API Token Sequence Diagram](https://www.draw.io/#G1YtAUbS6aQ6bzVLZxVPa3bsBn5pqaD1jU)
-
-
-* [Deployment Architecture](https://www.draw.io/#G1VraMgeGc7PFQWTPZQDN_B9UgEcb0nnxR)
-* [Spot Instance Join Sequence Diagram]()
