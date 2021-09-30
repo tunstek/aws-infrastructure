@@ -14,6 +14,16 @@
     path: "{{ working_dir }}/traefik/auth"
     state: directory
 
+- name: ensure {{ working_dir }}/traefik/logs exists
+  file:
+    path: "{{ working_dir }}/traefik/logs"
+    state: directory
+
+- name: ensure {{ working_dir }}/traefik/letsencrypt exists
+  file:
+    path: "{{ working_dir }}/traefik/letsencrypt"
+    state: directory
+
 - name: ensure {{ working_dir }}/dockerfiles exists
   file:
     path: "{{ working_dir }}/dockerfiles"

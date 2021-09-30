@@ -1,5 +1,14 @@
 ## Monitoring
 
+When the monitoring stack is first deployed, add a prometheus datasource and specify:
+- `prometheus:9090` as the url
+- Enable `basic auth`
+- Enter default .htpasswd credentials
+
+Then optionally add the swarm_dashboard.json Dashboard.
+
+
+
 This directory defines the monitoring stack.
 
 There are a number of `.template.yml` files defined here. These files are not complete and the proper `.yml` files need to be dynamically compiled for each cluster deployment via:

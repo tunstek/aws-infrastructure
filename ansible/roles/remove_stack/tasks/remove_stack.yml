@@ -1,4 +1,3 @@
 ---
 - name: Remove Stack
-  command: docker stack rm theoperator
-
+  command: docker stack rm stack

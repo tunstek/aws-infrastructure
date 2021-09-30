@@ -22,15 +22,15 @@ services:
         - traefik.enable=true
         - traefik.docker.network=jenkins-public
         - traefik.http.services.jenkins-master.loadbalancer.server.port=8080
-        - traefik.http.routers.jenkins-master.rule=Host(`jenkins.example.com`)
+        - traefik.http.routers.jenkins-master.rule=Host(`jenkins.${DOMAIN}`)
         - traefik.http.routers.jenkins-master.entrypoints=http
         # HTTPS
         - traefik.http.middlewares.jenkins-master-redirect-sec.redirectscheme.scheme=https
         - traefik.http.routers.jenkins-master.middlewares=jenkins-master-redirect-sec
-        - traefik.http.routers.jenkins-master-sec.rule=Host(`jenkins.example.com`)
+        - traefik.http.routers.jenkins-master-sec.rule=Host(`jenkins.${DOMAIN}`)
         - traefik.http.routers.jenkins-master-sec.entrypoints=https
         - traefik.http.routers.jenkins-master-sec.tls.certResolver=dnsCertResolver
-        - traefik.http.routers.jenkins-master-sec.tls.domains[0].main=*.example.com
+        - traefik.http.routers.jenkins-master-sec.tls.domains[0].main=*.${DOMAIN}
         # Basic Auth
         - traefik.http.middlewares.jenkins-master-sec-auth.basicauth.usersfile=/auth/.htpasswd
         - traefik.http.middlewares.jenkins-master-sec-auth.basicauth.realm=jenkins

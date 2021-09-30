@@ -162,5 +162,5 @@ void printServiceLogs(String service_name) {
     sh(script: "echo '${service_name} - Node Logs'")
     sh(script: "docker node ps | grep ${service_name}:test")
     sh(script: "echo '${service_name} - Service Logs'")
-    sh(script: "docker service ls | grep theoperator-test_${service_name} | awk '{print \$1}' | xargs -n 1 docker service logs")
+    sh(script: "docker service ls | grep test-stack_${service_name} | awk '{print \$1}' | xargs -n 1 docker service logs")
 }

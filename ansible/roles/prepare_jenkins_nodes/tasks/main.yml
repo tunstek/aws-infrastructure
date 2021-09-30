@@ -1,3 +1,4 @@
 ---
+- include: ensure_directory_structure.yml
 - include: set_docker_socket_permissions.yml
 - include: login_to_registry.yml

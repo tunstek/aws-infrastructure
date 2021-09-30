@@ -27,8 +27,8 @@ credentials_exception = HTTPException(
 pwd_context = CryptContext.from_path("config.ini")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 redis_client = redis.Redis(host='redis',
-                                  port=6379,
-                                  password='eed63a437bb9e3218990a18f01781e3c87d8ab1a1f628cb9cecef4845cafb5e8')
+                           port=6379,
+                           password='eed63a437bb9e3218990a18f01781e3c87d8ab1a1f628cb9cecef4845cafb5e8')
 
 
 class TokenData(BaseModel):

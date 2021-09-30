@@ -1,3 +1,3 @@
 ---
 - name: Remove Jenkins Stack
-  command: docker stack rm theoperator-jenkins
+  command: docker stack rm jenkins

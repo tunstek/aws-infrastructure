@@ -255,7 +255,7 @@ class Login extends React.Component {
         <div id="formContent">
 
           <div className="fadeIn first">
-            <h2>The Operator</h2>
+            <h2>App</h2>
           </div>
           {this.renderForm()}
         </div>

@@ -1,20 +1,57 @@
 
 ## Setup
-- Add Relevant IPs to ansible/hosts
+- Create an AWS access policy (TODO: create list of open ports)
+- Create 3 Elastic IPs in AWS (1 for leader and 2 for managers)
+- Add the Leader Elastic IP as an A DNS entry in Route 53 hosted zone
+- Spin up 3 instances
+- Associate the IPs with an instances
+- Ensure you can ssh into each machine with your .pem
 - Add your .pem to ansible/
+- Add IPs to ansible/hosts
 - Add relevant info to ansible/group_vars/all
 - Edit .env as required
-- Add leader IP to node_setup.sh (TODO: use .env)
-- Add AWS details to docker-compose-traefik.yml (TODO: use .env)
 - replace security details in auth/app/auth_functions.py (TODO: use .env)
-- Replace all 'example.com' occurencees with your own domain
-  - (docker-compose-traefik.yml, docker-compose.yml, jenkins/docker-compose-jenkins.yml, monitoring/docker-compose-template.yml)
 
 ## TODO
+- Configure services deployed via .env
 - Hide API test urls behind a .htpasswd
 - Add influxDB for API access tracking
-- replace JENKINS_SECRET to .env in jenkins/docker-compose-jenkins.yml
+- Fix Jenkins Deployment (Slave connection issues)
 
+Recommended to run 3 nodes (1 leader and 2 managers)
+
+
+
+## Links
+https://www.figma.com/file/entK0Sk5PdacaXFLJjTQCP/Landing-Page-Design
+
+EXAMPLE TRAEFIK LETSENCRYPT AWS ACCESS POLICY
+'''
+{
+   "Version": "2012-10-17",
+   "Statement": [
+       {
+           "Sid": "",
+           "Effect": "Allow",
+           "Action": [
+               "route53:GetChange",
+               "route53:ChangeResourceRecordSets",
+               "route53:ListResourceRecordSets"
+           ],
+           "Resource": [
+               "arn:aws:route53:::hostedzone/*",
+               "arn:aws:route53:::change/*"
+           ]
+       },
+       {
+           "Sid": "",
+           "Effect": "Allow",
+           "Action": "route53:ListHostedZonesByName",
+           "Resource": "*"
+       }
+   ]
+}
+'''
 
 ## Services
 ### Webservice
@@ -25,7 +62,7 @@ The webservice has two forms of deployment:
 
 ## Deployment
 1) Edit `ansible/hosts`
-2) Run `ansible-playbook deploy-cluster.yml`
+2) Run `ansible-playbook deploy_cluster.yml`
 - Initialises the cluster and the swarm-leader.
 - Deploys the private docker registry and Traefik
 3) Ensure user is present in /mnt/efs/traefik/auth/.htpasswd

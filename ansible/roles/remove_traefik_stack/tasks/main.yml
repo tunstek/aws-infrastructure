@@ -1,4 +1,6 @@
 ---
 - name: Remove Traefik Stack
-  command: docker stack rm theoperator-traefik
+  command: docker stack rm traefik
 
+- name: Clear Files
+  shell: rm -rf {{ working_dir }}/traefik/*

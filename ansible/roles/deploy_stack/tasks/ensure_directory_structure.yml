@@ -1,7 +1,7 @@
 ---
 - name: ensure {{ working_dir }} exists
   file:
-    path: "{{ working_dir }}/test"
+    path: "{{ working_dir }}"
     state: directory
 
 - name: ensure {{ working_dir }}/dockerfiles exists
@@ -19,12 +19,12 @@
     path: "{{ working_dir }}/test/auth/app"
     state: directory
 
-- name: ensure {{ working_dir }}/auth/redis/data exists
+- name: ensure {{ working_dir }}/auth/redis exists
   file:
-    path: "{{ working_dir }}/test/auth/redis/data"
+    path: "{{ working_dir }}/auth/redis"
     state: directory
 
-- name: ensure {{ working_dir }}/newswatcher/app exists
+- name: ensure {{ working_dir }}/auth/redis/data exists
   file:
-    path: "{{ working_dir }}/test/newswatcher/app"
+    path: "{{ working_dir }}/auth/redis/data"
     state: directory

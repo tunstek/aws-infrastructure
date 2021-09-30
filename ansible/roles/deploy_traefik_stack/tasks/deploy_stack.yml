@@ -1,5 +1,5 @@
 ---
 - name: deploy the traefik stack
-  shell: docker stack deploy --compose-file {{ working_dir }}/dockerfiles/docker-compose-traefik.yml theoperator-traefik
+  shell: docker stack deploy --compose-file {{ working_dir }}/dockerfiles/docker-compose-traefik.yml traefik
   environment:
       WORKING_DIR: '{{ working_dir }}'

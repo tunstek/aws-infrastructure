@@ -1,6 +1,7 @@
 ---
 - name: ensure {{ working_dir }} exists
   # Fail if this dir does not exist (EFS has not been mounted)
+  become: yes
   stat:
     path: "{{ working_dir }}"
   register: stat_result
@@ -9,6 +10,8 @@
   when: stat_result.stat.exists == False
 
 - name: ensure {{ working_dir }}/dockerfiles exists
+  become: yes
   file:
     path: "{{ working_dir }}/dockerfiles"
     state: directory
+    owner: "{{ ansible_user }}"

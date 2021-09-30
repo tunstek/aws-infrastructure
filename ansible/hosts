@@ -4,6 +4,7 @@
 # When new nodes want to join the cluster they simply ping the Redis instance running on this leader to receive the relevant join token
 [leader]
 ## LEADER IP HERE
+127.0.0.1
 
 [managers]
 # Managers act as Jenkins Slaves

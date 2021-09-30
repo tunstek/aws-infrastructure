@@ -17,12 +17,6 @@
     dest: '{{ working_dir }}/auth/redis/redis.config'
     owner: '{{ ansible_user }}'
 
-- name: copy newswatcher/app
-  copy:
-    src: ../../../newswatcher/app/
-    dest: '{{ working_dir }}/newswatcher/app/'
-    owner: '{{ ansible_user }}'
-
 # The compose file wil be used by jenkins later so may as well copy it over now
 - name: copy docker-compose
   copy:

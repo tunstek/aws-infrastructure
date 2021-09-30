@@ -1,0 +1,25 @@
+---
+- name: ensure {{ working_dir }} exists
+  file:
+    path: "{{ working_dir }}"
+    state: directory
+
+- name: ensure {{ working_dir }}/jenkins exists
+  file:
+    path: "{{ working_dir }}/jenkins"
+    state: directory
+
+- name: ensure {{ working_dir }}/jenkins/master exists
+  file:
+    path: "{{ working_dir }}/jenkins/master"
+    state: directory
+
+- name: ensure {{ working_dir }}/jenkins/slave-1 exists
+  file:
+    path: "{{ working_dir }}/jenkins/slave-1"
+    state: directory
+
+- name: ensure {{ working_dir }}/jenkins/slave-2 exists
+  file:
+    path: "{{ working_dir }}/jenkins/slave-2"
+    state: directory

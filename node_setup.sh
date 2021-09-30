@@ -2,8 +2,6 @@
 # This file is to be ran on startup for each worker spot instance
 # It's assumed that initial node setup has already been completed
 
-SWARM_LEADER_IP=127.0.0.1
-
 # Exponential Backoff
 BACKOFF=1
 BACKOFF_MAX=128

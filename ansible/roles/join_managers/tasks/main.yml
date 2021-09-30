@@ -1,5 +1,5 @@
 ---
-- name: join redundant manager nodes
+- name: join manager nodes
   shell: docker swarm join --token {{ hostvars['SWARM_TOKEN_HOLDER']['manager_token'] }} {{ leader_ip }}
   register: cmd
   failed_when:

@@ -24,15 +24,15 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.http.services.prometheus.loadbalancer.server.port=9090
-        - traefik.http.routers.prometheus.rule=Host(`prometheus.example.com`)
+        - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
         - traefik.http.routers.prometheus.entrypoints=http
         # HTTPS
         - traefik.http.middlewares.prometheus-redirect-sec.redirectscheme.scheme=https
         - traefik.http.routers.prometheus.middlewares=prometheus-redirect-sec
-        - traefik.http.routers.prometheus-sec.rule=Host(`prometheus.example.com`)
+        - traefik.http.routers.prometheus-sec.rule=Host(`prometheus.${DOMAIN}`)
         - traefik.http.routers.prometheus-sec.entrypoints=https
         - traefik.http.routers.prometheus-sec.tls.certResolver=dnsCertResolver
-        - traefik.http.routers.prometheus-sec.tls.domains[0].main=*.example.com
+        - traefik.http.routers.prometheus-sec.tls.domains[0].main=*.${DOMAIN}
         # Basic Auth
         - traefik.http.middlewares.prometheus-sec-auth.basicauth.usersfile=/auth/.htpasswd
         - traefik.http.middlewares.prometheus-sec-auth.basicauth.realm=prometheus
@@ -91,15 +91,15 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.http.services.monitoring.loadbalancer.server.port=3000
-        - traefik.http.routers.monitoring.rule=Host(`monitoring.example.com`)
+        - traefik.http.routers.monitoring.rule=Host(`monitoring.${DOMAIN}`)
         - traefik.http.routers.monitoring.entrypoints=http
         # HTTPS
         - traefik.http.middlewares.monitoring-redirect-sec.redirectscheme.scheme=https
         - traefik.http.routers.monitoring.middlewares=monitoring-redirect-sec
-        - traefik.http.routers.monitoring-sec.rule=Host(`monitoring.example.com`)
+        - traefik.http.routers.monitoring-sec.rule=Host(`monitoring.${DOMAIN}`)
         - traefik.http.routers.monitoring-sec.entrypoints=https
         - traefik.http.routers.monitoring-sec.tls.certResolver=dnsCertResolver
-        - traefik.http.routers.monitoring-sec.tls.domains[0].main=*.example.com
+        - traefik.http.routers.monitoring-sec.tls.domains[0].main=*.${DOMAIN}
         # Basic Auth
         - traefik.http.middlewares.monitoring-sec-auth.basicauth.usersfile=/auth/.htpasswd
         - traefik.http.middlewares.monitoring-sec-auth.basicauth.realm=monitoring

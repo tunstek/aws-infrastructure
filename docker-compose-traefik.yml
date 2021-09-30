@@ -7,6 +7,8 @@ services:
     command: >
       --accessLog=true
       --log.level=INFO
+      --log.filePath=/logs/log-file.log
+      --log.format=json
       --api.dashboard=true
       --providers.docker=true
       --providers.docker.endpoint=unix:///var/run/docker.sock
@@ -14,7 +16,7 @@ services:
       --providers.docker.exposedbydefault=false
       --entrypoints.http.address=:80
       --entrypoints.https.address=:443
-      --certificatesResolvers.dnsCertResolver.acme.email=user@example.com
+      --certificatesResolvers.dnsCertResolver.acme.email=${ACME_EMAIL}
       --certificatesResolvers.dnsCertResolver.acme.storage=letsencrypt/acme.json
       --certificatesResolvers.dnsCertResolver.acme.dnsChallenge=true
       --certificatesResolvers.dnsCertResolver.acme.dnsChallenge.provider=route53
@@ -27,28 +29,30 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /mnt/efs/traefik/letsencrypt:/letsencrypt
       - /mnt/efs/traefik/auth:/auth
+      - /mnt/efs/traefik/logs:/logs
     networks:
       - swarm-network # make this service available through other nodes
       - traefik-public
       - jenkins-public
-    #environment:
-      #- AWS_HOSTED_ZONE_ID=
-      #- AWS_ACCESS_KEY_ID=
-      #- AWS_SECRET_ACCESS_KEY=
+    environment:
+      - AWS_HOSTED_ZONE_ID=${AWS_HOSTED_ZONE_ID}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     # Ran into 'too many open files' error on this service, needs further investigating (issue #56)
+    # This might be an issue with the log file??
     #ulimits:
     #  nproc: 90000
     #  nofile: 90000
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.api.rule=Host(`traefik.example.com`)
+        - traefik.http.routers.api.rule=Host(`traefik.${DOMAIN}`)
         - traefik.http.routers.api.service=api@internal
         - traefik.http.services.api.loadbalancer.server.port=8080 # required for swarmmode
         # Setup HTTPS
         - traefik.http.middlewares.api-redirect-sec.redirectscheme.scheme=https
         - traefik.http.routers.api.middlewares=api-redirect-sec
-        - traefik.http.routers.api-sec.rule=Host(`traefik.example.com`)
+        - traefik.http.routers.api-sec.rule=Host(`traefik.${DOMAIN}`)
         - traefik.http.routers.api-sec.service=api@internal
         - traefik.http.routers.api-sec.entrypoints=https
         - traefik.http.routers.api-sec.tls.certResolver=dnsCertResolver
