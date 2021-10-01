@@ -24,7 +24,7 @@ services:
           - traefik.http.routers.public-api-sec.entrypoints=https
           - traefik.http.routers.public-api-sec.tls.certResolver=dnsCertResolver
           - traefik.http.routers.public-api-sec.tls.domains[0].main=*.${DOMAIN}
-        replicas: 2
+        replicas: 1
         placement:
           constraints:
             - node.labels.type!=swarm-leader
@@ -38,7 +38,7 @@ services:
       - auth
     restart: unless-stopped
     deploy:
-      replicas: 2
+      replicas: 1
       placement:
         constraints:
           - node.labels.type!=swarm-leader
@@ -51,7 +51,7 @@ services:
     working_dir: /redis/data
     command: ["redis-server", "/redis/redis.config"]
     deploy:
-      replicas: 2
+      replicas: 1
       placement:
         constraints:
           - node.labels.type!=swarm-leader
@@ -76,27 +76,31 @@ services:
   #  deploy:
   #    replicas: 2
 
-  #webservice:
-  #  build:
-  #    context: ./webservice
-  #    dockerfile: Dockerfile
-  #  image: localhost:5000/webservice:latest
-  #  container_name: webservice
-  #  ports:
-  #    - "5000:5000" # Must be the same as the node port (else you'll get a blank page because static resources will 404)
-  #    - "8000:8000"
-  #  volumes:
-  #    - ${WORKING_DIR:-/mnt/efs}/webservice/app:/app
-  #    - /app/node_modules # stops /app/node_modules getting overwritten with the hosts node_modules
-  #  networks:
-  #    - traefik-public
-  #    - auth
-  #    - services # backend needs connection to couchDB for watchlist updates for example
-  #  labels:
-  #    - "traefik.enable=true"
-  #    - "traefik.http.routers.webservice.rule=Host(`localhost`)"
-  #    - "traefik.http.routers.webservice.entrypoints=http"
-  #  restart: unless-stopped
+  webservice:
+    image: httpd:2.4-alpine
+    container_name: webservice
+    volumes:
+      - ${WORKING_DIR:-/mnt/efs}/webservice/public-html/:/usr/local/apache2/htdocs/
+    networks:
+      - traefik-public
+      - auth
+      - services # backend needs connection to couchDB for watchlist updates for example
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.services.webservice.loadbalancer.server.port=80
+        - traefik.http.routers.webservice.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.webservice.entrypoints=http
+        # HTTPS
+        - traefik.http.middlewares.webservice-redirect-sec.redirectscheme.scheme=https
+        - traefik.http.routers.webservice.middlewares=webservice-redirect-sec
+        - traefik.http.routers.webservice-sec.rule=Host(`${DOMAIN}`)
+        - traefik.http.routers.webservice-sec.entrypoints=https
+        - traefik.http.routers.webservice-sec.tls.certResolver=dnsCertResolver
+        - traefik.http.routers.webservice-sec.tls.domains[0].main=${DOMAIN}
+      replicas: 1
+    restart: unless-stopped
 
 
 networks:

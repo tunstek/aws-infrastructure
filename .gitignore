@@ -25,3 +25,4 @@ report.html
 .coverage
 auth/influxdb/*
 !auth/influxdb/influxdb.conf
+webservice_old/

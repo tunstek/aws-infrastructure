@@ -25,8 +25,8 @@ This project is the remnants of a financial services API I was working on some t
 - Add IPs to ansible/hosts
 - Add relevant info to ansible/group_vars/all
 - Edit .env as required
-- Run ```ansible-playbook deploy_cluster.yml```
-- Configure Jenkins as required
+- Run `ansible-playbook ansible/deploy_cluster.yml`
+- Configure Jenkins as required ( + add docker registry credentials)
 - See ```ansible/``` for other scripts to run
 
 ## TODO
@@ -37,6 +37,7 @@ This project is the remnants of a financial services API I was working on some t
 - Hide API test urls behind a .htpasswd
 - Add influxDB for API access tracking
 - Replace security details in auth/app/auth_functions.py (TODO: use .env)
+- webservice deployment on Jenkins
 
 
 It's recommended to run 3 nodes (1 leader and 2 managers), especially for a Jenkins deployment but it's not entirely necessary
