@@ -1,0 +1,9 @@
+---
+- name: Push Auth image to {{ registry_host }}
+  shell: docker push {{ registry_host }}/auth:latest
+
+- name: Push Public-API image to {{ registry_host }}
+  shell: docker push {{ registry_host }}/public_api:latest
+
+- name: Push Webservice image to {{ registry_host }}
+  shell: docker push {{ registry_host }}/webservice:latest

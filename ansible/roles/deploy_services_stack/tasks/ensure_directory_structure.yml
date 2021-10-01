@@ -1,0 +1,40 @@
+---
+- name: ensure {{ working_dir }} exists
+  file:
+    path: "{{ working_dir }}"
+    state: directory
+
+- name: ensure {{ working_dir }}/webservice exists
+  file:
+    path: "{{ working_dir }}/webservice"
+    state: directory
+
+- name: ensure {{ working_dir }}/webservice/app exists
+  file:
+    path: "{{ working_dir }}/webservice/app"
+    state: directory
+
+- name: ensure {{ working_dir }}/public_api exists
+  file:
+    path: "{{ working_dir }}/public_api"
+    state: directory
+
+- name: ensure {{ working_dir }}/public_api/app exists
+  file:
+    path: "{{ working_dir }}/public_api/app"
+    state: directory
+
+- name: ensure {{ working_dir }}/auth exists
+  file:
+    path: "{{ working_dir }}/auth"
+    state: directory
+
+- name: ensure {{ working_dir }}/auth/app exists
+  file:
+    path: "{{ working_dir }}/auth/app"
+    state: directory
+
+- name: ensure {{ working_dir }}/auth/redis exists
+  file:
+    path: "{{ working_dir }}/auth/redis"
+    state: directory

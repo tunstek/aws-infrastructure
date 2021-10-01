@@ -17,5 +17,6 @@
   roles:
     - deploy_registry_stack
     - deploy_traefik_stack
-    - deploy_jenkins_stack
     - deploy_monitoring_stack
+    - deploy_services_stack
+    #- deploy_jenkins_stack

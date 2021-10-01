@@ -4,3 +4,4 @@
 - include: init_docker.yml
 - include: auto_mount_efs.yml
 - include: create_swap_space.yml
+- include: copy_env_file.yml

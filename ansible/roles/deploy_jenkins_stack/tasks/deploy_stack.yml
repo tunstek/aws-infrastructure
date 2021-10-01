@@ -1,8 +1,8 @@
 ---
 - name: deploy jenkins stack
-  shell: docker stack deploy --with-registry-auth --compose-file {{ working_dir }}/dockerfiles/docker-compose-jenkins.yml jenkins
-  environment:
-    REGISTRY_HOST: '{{ registry_host }}'
+  shell: export $(cat {{ working_dir }}/.env) > /dev/null 2>&1 ; docker stack deploy --with-registry-auth --compose-file {{ working_dir }}/dockerfiles/docker-compose-jenkins.yml jenkins
+  #environment:
+  #  REGISTRY_HOST: '{{ registry_host }}'
   register: cmd
 
 - debug:

@@ -1,0 +1,6 @@
+---
+- name: copy .env
+  copy:
+    src: ../../../.env
+    dest: '{{ working_dir }}'
+    owner: '{{ ansible_user }}'

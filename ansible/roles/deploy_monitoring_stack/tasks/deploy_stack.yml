@@ -1,6 +1,6 @@
 ---
 - name: deploy the monitoring stack
   # node deploying stack 'monitoring' will exceed service naming limit
-  shell: docker stack deploy --compose-file {{ working_dir }}/monitoring/docker-compose-monitoring.yml monitoring
-  environment:
-    WORKING_DIR: '{{ working_dir }}'
+  shell: export $(cat {{ working_dir }}/.env) > /dev/null 2>&1 ; docker stack deploy --compose-file {{ working_dir }}/monitoring/docker-compose-monitoring.yml monitoring
+  #environment:
+  #  WORKING_DIR: '{{ working_dir }}'

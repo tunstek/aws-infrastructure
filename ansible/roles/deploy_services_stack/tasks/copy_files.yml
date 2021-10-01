@@ -1,0 +1,49 @@
+---
+- name: copy webservice
+  copy:
+    src: ../../../webservice/
+    dest: '{{ working_dir }}/webservice/'
+    owner: '{{ ansible_user }}'
+
+- name: copy public_api
+  copy:
+    src: ../../../public_api/
+    dest: '{{ working_dir }}/public_api/'
+    owner: '{{ ansible_user }}'
+
+- name: copy auth/app
+  copy:
+    src: ../../../auth/app/
+    dest: '{{ working_dir }}/auth/app/'
+    owner: '{{ ansible_user }}'
+
+- name: copy auth/redis/redis.config
+  copy:
+    src: ../../../auth/redis/redis.config
+    dest: '{{ working_dir }}/auth/redis/redis.config'
+    owner: '{{ ansible_user }}'
+
+- name: copy auth/Dockerfile
+  copy:
+    src: ../../../auth/Dockerfile
+    dest: '{{ working_dir }}/auth'
+    owner: '{{ ansible_user }}'
+
+# The compose file will be used by jenkins later so may as well copy it over now
+- name: copy docker-compose
+  copy:
+    src: ../../../docker-compose.yml
+    dest: '{{ working_dir }}/dockerfiles'
+    owner: '{{ ansible_user }}'
+
+- name: copy docker-compose-test
+  copy:
+    src: ../../../docker-compose-test.yml
+    dest: '{{ working_dir }}/dockerfiles'
+    owner: '{{ ansible_user }}'
+
+- name: chmod the compose file
+  shell: chmod 644 {{ working_dir }}/dockerfiles/docker-compose.yml
+
+- name: chmod the test compose file
+  shell: chmod 644 {{ working_dir }}/dockerfiles/docker-compose-test.yml

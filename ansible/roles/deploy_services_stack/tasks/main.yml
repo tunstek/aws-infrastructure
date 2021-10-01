@@ -1,0 +1,8 @@
+---
+- include: ensure_directory_structure.yml
+- include: copy_files.yml
+- include: create_networks.yml
+- include: registry_login.yml
+- include: build_images.yml
+- include: push_images.yml
+- include: deploy_stack.yml

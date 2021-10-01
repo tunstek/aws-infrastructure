@@ -1,6 +1,6 @@
 ---
-- name: deploy the traefik stack
-  shell: export $(cat {{ working_dir }}/.env) > /dev/null 2>&1 ; docker stack deploy --compose-file {{ working_dir }}/dockerfiles/docker-compose-traefik.yml traefik
+- name: deploy the stack
+  shell: export $(cat {{ working_dir }}/.env) > /dev/null 2>&1 ; docker stack deploy --compose-file {{ working_dir }}/dockerfiles/docker-compose.yml services
   #environment:
   #    WORKING_DIR: '{{ working_dir }}'
   #    DOMAIN: '{{ domain }}'

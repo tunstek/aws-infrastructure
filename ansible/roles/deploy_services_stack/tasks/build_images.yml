@@ -1,0 +1,9 @@
+---
+- name: Build Auth Service
+  shell: docker build -t {{ registry_host }}/auth:latest {{ working_dir }}/auth/
+
+- name: Build Public API Service
+  shell: docker build -t {{ registry_host }}/public_api:latest {{ working_dir }}/public_api/
+
+- name: Build Webservice
+  shell: docker build -t {{ registry_host }}/webservice:latest {{ working_dir }}/webservice/
