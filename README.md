@@ -1,13 +1,23 @@
 # AWS Infrastructure Deployment
-AWS Docker Swarm deployment over Spot Fleet made easy!
+AWS Docker Swarm deployment over Spot Fleet made easy! Everything is deployed via Ansible.
 
 
 Services include:
 * Traefik Reverse Proxy + LetsEncrypt
 * Swarm Monitoring via Prometheus and Grafana
 * Example Frontend With Login Page
-* Example Backend API
-* Jenkins Deployment
+* Example Backend API with FastAPI
+* Jenkins Deployment + Jenkins file example that automatically deploys successfully tested services
+* Internal Auth service for API tracking and frontend login/registration
+
+| Exposed Service   | URL |
+| --------- | ----- |
+| Webservice | example.com |
+| FastAPI | api.example.com |
+| Monitoring Dashboard | monitoring.example.com |
+| Jenkins | jenkins.example.com |
+| Traefik Dashboard   | traefik.example.com      |
+
 
 
 This project is the remnants of a financial services API I was working on some time ago (theoperator.io). The idea was very similar to that of alphavantage.co. theoperator.io has been abandoned for some time but I've recently started working on a new project and decided to not let the work here go to waste.
@@ -30,14 +40,14 @@ This project is the remnants of a financial services API I was working on some t
 - See ```ansible/``` for other scripts to run
 
 ## TODO
-- Fix Frontend Example
-- Fix Backend API Example
+- Fix Frontend Login Example
 - Fix Jenkins Deployment (Slave connection issues)
 - Configure services deployed via .env
 - Hide API test urls behind a .htpasswd
 - Add influxDB for API access tracking
 - Replace security details in auth/app/auth_functions.py (TODO: use .env)
 - webservice deployment on Jenkins
+- Move all config to .env
 
 
 It's recommended to run 3 nodes (1 leader and 2 managers), especially for a Jenkins deployment but it's not entirely necessary
@@ -48,7 +58,6 @@ Rebalance a service across all nodes using:
 ## Example EC2 Security Group
 | Port      | Protocol | Description |
 | --------- | -------- | ----------- |
-| 80        | TCP      | HTTP Access |
 | 443       | TCP      | HTTPS Access|
 | 8080      | TCP      | Traefik Load Balancer Port |
 | 9090      | TCP      | Prometheus Port |
